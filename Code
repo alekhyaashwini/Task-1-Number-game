@@ -1,0 +1,99 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class GuessingGame {
+
+    // Method to simulate a typing animation for text
+    private static void typeAnimation(String text, int delay) {
+        for (char c : text.toCharArray()) {
+            System.out.print(c);
+            try {
+                Thread.sleep(delay);  // Delay for each character to simulate typing
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println();
+    }
+
+    // Method to simulate a countdown animation before the game starts
+    private static void countdown() {
+        for (int i = 3; i > 0; i--) {
+            System.out.print(i + "...");
+            try {
+                Thread.sleep(1000);  // 1 second delay
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Go!");
+    }
+
+    // Method to play a single round of the game
+    public static int playGame() {
+        Random rand = new Random();
+        Scanner scanner = new Scanner(System.in);
+
+        // Generate a random number between 1 and 100
+        int secretNumber = rand.nextInt(100) + 1;
+
+        // Set a limit for the number of attempts
+        int maxAttempts = 10;
+        int attempts = 0;
+        boolean guessedCorrectly = false;
+
+        typeAnimation("Welcome to the Guessing Game!", 50);
+        typeAnimation("I have chosen a number between 1 and 100. Try to guess it!", 50);
+        System.out.println("Let the game begin!");
+        countdown();  // Start countdown animation before the user starts guessing
+
+        // Allow the user to guess multiple times until they get it right or exhaust attempts
+        while (attempts < maxAttempts && !guessedCorrectly) {
+            System.out.print("Attempt " + (attempts + 1) + "/" + maxAttempts + ": Enter your guess: ");
+            int guess = scanner.nextInt();
+            attempts++;
+
+            // Provide feedback on the user's guess
+            if (guess < secretNumber) {
+                typeAnimation("Too low! Try again.", 30);
+            } else if (guess > secretNumber) {
+                typeAnimation("Too high! Try again.", 30);
+            } else {
+                typeAnimation("Congratulations! You guessed the number " + secretNumber + " in " + attempts + " attempts.", 50);
+                guessedCorrectly = true;
+            }
+        }
+
+        // If the user didn't guess correctly within the attempts limit
+        if (!guessedCorrectly) {
+            typeAnimation("Sorry, you've used all your attempts. The correct number was " + secretNumber + ".", 50);
+        }
+
+        return attempts;
+    }
+
+    // Main method to control the flow of the game
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int totalScore = 0;
+        int rounds = 0;
+
+        // Ask the user if they want to play multiple rounds
+        while (true) {
+            rounds++;
+            int attemptsTaken = playGame();
+            totalScore += attemptsTaken;
+
+            // Ask if the user wants to play another round
+            typeAnimation("Do you want to play again? (yes/no): ", 50);
+            String response = scanner.next();
+            if (response.equalsIgnoreCase("no")) {
+                break;
+            }
+        }
+
+        // Display the user's score after multiple rounds
+        typeAnimation("You played " + rounds + " rounds.", 50);
+        typeAnimation("Your total score (based on the number of attempts taken): " + totalScore, 50);
+    }
+}
